@@ -4,11 +4,15 @@
   "description": "a backend application where user buy food online",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node src/index.js"
   },
   "keywords": [
     "backend"
   ],
   "author": "Nikhil Kumar <nikhilkumarmandal946@gmail.com>",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.1.0",
+    "typescript": "^5.5.4"
+  }
 }
