@@ -1,0 +1,14 @@
+{
+  "name": "powerful-backend",
+  "version": "1.0.0",
+  "description": "a backend application where user buy food online",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "backend"
+  ],
+  "author": "Nikhil Kumar <nikhilkumarmandal946@gmail.com>",
+  "license": "ISC"
+}
