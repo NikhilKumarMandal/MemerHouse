@@ -1,18 +1,29 @@
 {
   "name": "powerful-backend",
   "version": "1.0.0",
-  "description": "a backend application where user buy food online",
+  "description": "a backend project that deliver food",
   "main": "index.js",
   "scripts": {
-    "dev": "node src/index.js"
+    "dev": "node src/index.js",
+    "format:check": "prettier . --check",
+    "format:fix": "prettier . --write",
+    "lint": "eslint .",
+    "lint:fix":"eslint . --fix"
   },
   "keywords": [
     "backend"
   ],
-  "author": "Nikhil Kumar <nikhilkumarmandal946@gmail.com>",
+  "author": "nikhil kumar <nikhilkumarmandal946@gmail.com>",
   "license": "ISC",
   "devDependencies": {
+    "@eslint/js": "^9.8.0",
+    "@types/eslint__js": "^8.42.3",
     "@types/node": "^22.1.0",
-    "typescript": "^5.5.4"
+    "eslint": "^9.8.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.0.1"
   }
 }
