@@ -1,29 +1,29 @@
 {
   "name": "powerful-backend",
   "version": "1.0.0",
-  "description": "a backend project that deliver food",
+  "description": "a backend application where user can sell food online",
   "main": "index.js",
   "scripts": {
     "dev": "node src/index.js",
     "format:check": "prettier . --check",
     "format:fix": "prettier . --write",
     "lint": "eslint .",
-    "lint:fix":"eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "prepare": "husky install"
   },
   "keywords": [
     "backend"
   ],
-  "author": "nikhil kumar <nikhilkumarmandal946@gmail.com>",
+  "author": "nikhil kumar",
   "license": "ISC",
   "devDependencies": {
-    "@eslint/js": "^9.8.0",
-    "@types/eslint__js": "^8.42.3",
     "@types/node": "^22.1.0",
-    "eslint": "^9.8.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.1",
+    "@typescript-eslint/parser": "^8.0.1",
+    "eslint": "^8.49.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "prettier": "^3.3.3",
-    "typescript": "^5.5.4",
-    "typescript-eslint": "^8.0.1"
+    "husky": "^8.0.3",
+    "prettier": "^3.0.3",
+    "typescript": "^5.5.4"
   }
 }
