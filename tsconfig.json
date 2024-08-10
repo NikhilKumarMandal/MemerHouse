@@ -109,6 +109,11 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true
   },
+   "include": [
+    "src/**/*",
+    "app.spec.ts", // Add this line if the file is at the root
+    "tests/**/*.ts" // Or add this line if your test files are in a "tests" directory
+  ],
   "exclude": [
     "**/*.spec.ts",
     // , "**/*.mjs", "**/*.js",
