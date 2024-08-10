@@ -4,10 +4,9 @@ import logger from "./config/logger";
 
 const startServer = () => {
   try {
-    //   throw new Error("something went wrong")
-    app.listen(Config.PORT, () =>
-      logger.info(`Listening on port ${Config.PORT}`)
-    );
+    app.listen(Config.PORT, () => {
+      logger.info(`Listening on port ${Config.PORT}`);
+    });
   } catch (error) {
     if (error instanceof Error) {
       logger.error(error.message);
