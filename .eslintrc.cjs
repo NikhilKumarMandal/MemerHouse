@@ -8,16 +8,15 @@ module.exports = {
   parser: "@typescript-eslint/parser",
   plugins: ["@typescript-eslint"],
   parserOptions: {
-    project: "./tsconfig.json", 
+    project: "./tsconfig.json",
     tsconfigRootDir: __dirname,
   },
-  ignorePatterns: ["*.spec.ts","jest.config.js"],
+  ignorePatterns: ["*.spec.ts", "jest.config.js"],
   root: true,
   rules: {
     "no-console": "off",
     "dot-notation": "error",
     "@typescript-eslint/no-misused-promises": "off",
-    "@typescript-eslint/require-await": "off", 
+    "@typescript-eslint/require-await": "off",
   },
 };
-
