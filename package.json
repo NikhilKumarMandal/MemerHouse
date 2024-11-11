@@ -1,16 +1,15 @@
 {
-  "name": "powerful-backend",
+  "name": "memerhouse-backend",
   "version": "1.0.0",
-  "description": "a backend application where user can sell food online",
+  "description": "a backend application where user can post memes",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/server.ts",
+    "dev": "nodemon src/index.ts",
     "format:check": "prettier . --check",
     "format:fix": "prettier . --write",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "prepare": "husky install",
-    "test": "jest --watch --runInBand"
+    "prepare": "husky install"
   },
   "keywords": [
     "backend"
@@ -45,6 +44,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "http-errors": "^2.0.0",
+    "mongoose": "^8.8.1",
     "morgan": "^1.10.0",
     "uuid": "^11.0.3",
     "winston": "^3.14.1"

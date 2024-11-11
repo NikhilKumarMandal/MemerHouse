@@ -1,24 +1,21 @@
 import { createLogger, format, transports } from "winston";
-import { Config } from ".";
-const { combine, timestamp, json, colorize, printf } = format;
+import { Config } from "../config";
+const { combine, timestamp, json, colorize } = format;
 
-// Custom format for console logging with colors
-const consoleLogFormat = combine(
-  colorize(),
-  timestamp(),
-  printf(({ level, message, timestamp }) => {
-    return `${timestamp} ${level}: ${message}`;
+const consoleLogFormat = format.combine(
+  format.colorize(),
+  format.printf(({ level, message }) => {
+    return `${level}: ${message}`;
   })
 );
 
 // Create a Winston logger
 const logger = createLogger({
   level: "info",
-  format: combine(timestamp(), json()),
+  format: combine(colorize(), timestamp(), json()),
   transports: [
     new transports.Console({
       format: consoleLogFormat,
-      silent: Config.NODE_ENV === "test",
     }),
     new transports.File({
       filename: "app.log",

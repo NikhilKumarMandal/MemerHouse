@@ -1,10 +1,13 @@
 import { config } from "dotenv";
+import path from "path";
+config({
+  path: path.join(__dirname, `../../.env.${process.env.NODE_ENV || "dev"}`),
+});
 
-config();
-
-const { PORT, NODE_ENV } = process.env;
+const { PORT, NODE_ENV, MONGODB_URI } = process.env;
 
 export const Config = {
   PORT,
   NODE_ENV,
+  MONGODB_URI,
 };
