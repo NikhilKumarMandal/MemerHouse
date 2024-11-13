@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import tokenModel from "../models/token.model";
 
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
@@ -21,5 +22,14 @@ export class TokenService {
     });
 
     return { accessToken, refreshToken };
+  }
+
+  async savetoken(refreshToken: string, userId: string) {
+    const token = await tokenModel.create({
+      refreshToken,
+      userId,
+    });
+    const savedToken = await token.save();
+    return savedToken;
   }
 }

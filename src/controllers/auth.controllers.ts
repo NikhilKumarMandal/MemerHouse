@@ -1,3 +1,4 @@
+import { UserDto } from "../dtos/user.dto";
 import { HashService } from "../services/hash.services";
 import { OtpService } from "../services/otp.services";
 import { TokenService } from "../services/token.services";
@@ -85,6 +86,8 @@ export class AuthController {
       _id: userId,
     });
 
+    await this.tokenService.savetoken(refreshToken, userId);
+
     const accessCookie: CookieOptions = {
       sameSite: "strict",
       maxAge: 1000 * 60 * 60 * 24, // 1 day
@@ -97,10 +100,12 @@ export class AuthController {
       httpOnly: true,
     };
 
+    const userDto = new UserDto(user);
+
     res
       .status(200)
       .cookie("accessToken", accessToken, accessCookie)
       .cookie("refreshToken", refreshToken, refreshCookie)
-      .json(new ApiResponse(200, user, "User created Successfully"));
+      .json(new ApiResponse(200, userDto, "User created Successfully"));
   });
 }
