@@ -11,4 +11,8 @@ export class UserService {
     const savedUser = await user.save();
     return savedUser;
   }
+
+  async findById(userId: string) {
+    return await userModel.findById(userId);
+  }
 }

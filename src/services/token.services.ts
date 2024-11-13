@@ -32,4 +32,8 @@ export class TokenService {
     const savedToken = await token.save();
     return savedToken;
   }
+
+  verifyToken(token: string) {
+    return jwt.verify(token, accessTokenSecret!) as string;
+  }
 }
