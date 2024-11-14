@@ -1,9 +1,10 @@
+import { Logger } from "winston";
 import { UserDto } from "../dtos/user.dto";
 import { HashService } from "../services/hash.services";
 import { OtpService } from "../services/otp.services";
 import { TokenService } from "../services/token.services";
 import { UserService } from "../services/user.services";
-import { IBody } from "../types/type";
+import { DecodedToken, IBody } from "../types/type";
 import { ApiError } from "../utils/ApiError";
 import { ApiResponse } from "../utils/ApiResponse";
 import { asyncHandler } from "../utils/asyncHandler";
@@ -14,7 +15,8 @@ export class AuthController {
     private otpService: OtpService,
     private hashService: HashService,
     private userService: UserService,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private logger: Logger
   ) {}
 
   sendOtp = asyncHandler(async (req: Request, res: Response) => {
@@ -108,4 +110,76 @@ export class AuthController {
       .cookie("refreshToken", refreshToken, refreshCookie)
       .json(new ApiResponse(200, userDto, "User created Successfully"));
   });
+
+  genrateRefreshAndAccessToken = asyncHandler(
+    async (req: Request, res: Response) => {
+      const incomingRefreshToken = req.cookies.refreshToken as string;
+
+      if (!incomingRefreshToken) {
+        throw new ApiError(401, "Unauthorized request");
+      }
+
+      try {
+        const decodedToken = this.tokenService.verifyRefreshToken(
+          incomingRefreshToken
+        ) as unknown as DecodedToken;
+
+        const userId = decodedToken?.id;
+
+        if (!userId) {
+          throw new ApiError(409, "Invalid token payload");
+        }
+
+        const user = await this.userService.findById(userId);
+
+        if (!user) {
+          throw new ApiError(409, "User does not exist!");
+        }
+
+        if (incomingRefreshToken !== user?.refreshToken) {
+          throw new ApiError(409, "Refresh token is expired or invalid");
+        }
+
+        const { refreshToken: newRefreshToken, accessToken } =
+          this.tokenService.genrateToken({
+            _id: userId,
+          });
+
+        await this.tokenService.savetoken(newRefreshToken, userId);
+
+        const accessCookie: CookieOptions = {
+          sameSite: "strict",
+          maxAge: 1000 * 60 * 60 * 24, // 1 day
+          httpOnly: true,
+        };
+
+        const refreshCookie: CookieOptions = {
+          sameSite: "strict",
+          maxAge: 1000 * 60 * 60 * 24 * 10, // 10 days
+          httpOnly: true,
+        };
+
+        res
+          .status(200)
+          .cookie("accessToken", accessToken, accessCookie)
+          .cookie("refreshToken", newRefreshToken, refreshCookie)
+          .json(
+            new ApiResponse(
+              200,
+              {
+                accessToken,
+                refreshToken: newRefreshToken,
+              },
+              "Token refresh successfulyy"
+            )
+          );
+      } catch (error) {
+        this.logger.error(error);
+        throw new ApiError(
+          500,
+          "Something went wrong while generating the refresh token!"
+        );
+      }
+    }
+  );
 }

@@ -37,4 +37,8 @@ export class TokenService {
   verifyToken(token: string) {
     return jwt.verify(token, accessTokenSecret!) as DecodedToken;
   }
+
+  verifyRefreshToken(token: string) {
+    return jwt.verify(token, refreshTokenSecret!) as DecodedToken;
+  }
 }

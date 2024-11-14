@@ -4,6 +4,8 @@ import { OtpService } from "../services/otp.services";
 import { HashService } from "../services/hash.services";
 import { UserService } from "../services/user.services";
 import { TokenService } from "../services/token.services";
+import { ActivateController } from "../controllers/activate.controllers";
+import logger from "../utils/logger";
 
 const router = Router();
 
@@ -16,10 +18,15 @@ const authController = new AuthController(
   otpService,
   hashService,
   userService,
-  tokenService
+  tokenService,
+  logger
 );
+
+const activateController = new ActivateController(userService);
 
 router.post("/send-otp", authController.sendOtp);
 router.post("/verify-otp", authController.verifyOtp);
+router.post("/activate", activateController.activate);
+router.post("/refreshToken", authController.genrateRefreshAndAccessToken);
 
 export default router;

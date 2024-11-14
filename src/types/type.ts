@@ -25,3 +25,9 @@ export interface UpdateData {
 export interface DecodedToken extends JwtPayload {
   id: string;
 }
+
+export interface AuthenticatedRequest extends Request {
+  cookies: {
+    refreshToken?: string;
+  };
+}
