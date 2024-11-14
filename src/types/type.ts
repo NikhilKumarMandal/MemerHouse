@@ -31,3 +31,15 @@ export interface AuthenticatedRequest extends Request {
     refreshToken?: string;
   };
 }
+
+export interface Room {
+  topic: string;
+  roomType: string;
+  owner: string;
+  speakers?: string[];
+}
+
+export interface Data {
+  topic: string;
+  roomType: string;
+}

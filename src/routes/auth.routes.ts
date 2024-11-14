@@ -6,6 +6,8 @@ import { UserService } from "../services/user.services";
 import { TokenService } from "../services/token.services";
 import { ActivateController } from "../controllers/activate.controllers";
 import logger from "../utils/logger";
+import { verifyJWT } from "../middlewares/auth.middleware";
+import { upload } from "../middlewares/multer.middleware";
 
 const router = Router();
 
@@ -26,7 +28,23 @@ const activateController = new ActivateController(userService);
 
 router.post("/send-otp", authController.sendOtp);
 router.post("/verify-otp", authController.verifyOtp);
-router.post("/activate", activateController.activate);
-router.post("/refreshToken", authController.genrateRefreshAndAccessToken);
+
+router.post(
+  "/activate",
+  verifyJWT,
+  upload.fields([
+    {
+      name: "avatar",
+      maxCount: 1,
+    },
+  ]),
+  activateController.activate
+);
+
+router.post(
+  "/refreshToken",
+  verifyJWT,
+  authController.genrateRefreshAndAccessToken
+);
 
 export default router;
