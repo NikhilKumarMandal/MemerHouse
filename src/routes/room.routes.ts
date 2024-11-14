@@ -10,5 +10,6 @@ const roomService = new RoomService();
 const roomController = new RoomController(roomService, logger);
 
 router.post("/create-room", verifyJWT, roomController.create);
+router.post("/get-all-rooms", verifyJWT, roomController.index);
 
 export default router;

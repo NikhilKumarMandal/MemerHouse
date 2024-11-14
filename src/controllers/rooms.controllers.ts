@@ -35,4 +35,13 @@ export class RoomController {
       .status(200)
       .json(new ApiResponse(200, room, "Room created successfully"));
   });
+
+  // Todo: Improve this contoller later:-
+  index = asyncHandler(async (req: Request, res: Response) => {
+    const room = await this.roomService.getAllRooms(["open"]);
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, room, "Fected rooms successfully"));
+  });
 }

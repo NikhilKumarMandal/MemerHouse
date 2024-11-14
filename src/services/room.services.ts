@@ -12,4 +12,10 @@ export class RoomService {
     });
     return await room.save();
   }
+
+  // Todo: Add aggreate pipeline
+  async getAllRooms(roomTypes: string[]) {
+    const rooms = await roomModel.find({ roomType: { $in: roomTypes } });
+    return rooms;
+  }
 }
