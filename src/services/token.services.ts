@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import tokenModel from "../models/token.model";
+import { DecodedToken } from "../types/type";
 
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
@@ -34,6 +35,6 @@ export class TokenService {
   }
 
   verifyToken(token: string) {
-    return jwt.verify(token, accessTokenSecret!) as string;
+    return jwt.verify(token, accessTokenSecret!) as DecodedToken;
   }
 }

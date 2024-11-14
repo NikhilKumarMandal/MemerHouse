@@ -1,4 +1,5 @@
 import userModel from "../models/user.model";
+import { UpdateData } from "../types/type";
 
 export class UserService {
   async findUser(data: string) {
@@ -14,5 +15,23 @@ export class UserService {
 
   async findById(userId: string) {
     return await userModel.findById(userId);
+  }
+
+  async findByIdAndUpdate(userId: string, data: UpdateData) {
+    const user = await userModel.findByIdAndUpdate(
+      {
+        _id: userId,
+      },
+      {
+        $set: {
+          ...data,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    return user;
   }
 }
