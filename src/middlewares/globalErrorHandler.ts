@@ -3,20 +3,27 @@ import { HttpError } from "http-errors";
 import { v4 as uuid } from "uuid";
 import logger from "../utils/logger";
 
+// Global Error Handler
 export const globalErrorHandler = (
   err: HttpError,
   req: Request,
   res: Response
 ) => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  // Ensure res is the expected response object
+  if (!(res && typeof res.status === "function")) {
+    console.error("Invalid response object", res);
+    return;
+  }
+
   const errorId = uuid();
   const statusCode = err.status || 500;
 
-  const isProduction = (process.env.NODE_ENV = "production");
+  // Ensure correct production environment detection
+  const isProduction = process.env.NODE_ENV === "production";
   const message = isProduction ? "Internal Server Error" : err.message;
 
+  // Log the error details for debugging
   logger.error(err.message, {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     id: errorId,
     statusCode,
     err: err.stack,
@@ -24,10 +31,10 @@ export const globalErrorHandler = (
     method: req.method,
   });
 
+  // Send the error response
   res.status(statusCode).json({
     errors: [
       {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         ref: errorId,
         type: err.name,
         msg: message,

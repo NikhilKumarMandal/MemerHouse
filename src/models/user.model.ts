@@ -4,20 +4,32 @@ const userSchema = new mongoose.Schema(
   {
     phone: {
       type: String,
+    },
+    email: {
+      type: String,
       required: true,
+      unique: true,
+      trim: true,
+    },
+    username: {
+      type: String,
+      required: false,
+      trim: true,
+    },
+    password: {
+      type: String,
+      requried: true,
+      trim: true,
     },
     name: {
       type: String,
-      required: false,
     },
     avatar: {
       public_id: {
         type: String,
-        required: true,
       },
       url: {
         type: String,
-        required: true,
       },
     },
     activated: {
@@ -27,6 +39,16 @@ const userSchema = new mongoose.Schema(
     },
     refreshToken: {
       type: String,
+    },
+    otp: {
+      type: String,
+    },
+    otpExpire: {
+      type: Date,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
     },
   },
   {

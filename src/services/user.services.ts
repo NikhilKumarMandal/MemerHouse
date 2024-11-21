@@ -1,5 +1,5 @@
 import userModel from "../models/user.model";
-import { UpdateData } from "../types/type";
+import { IUser, UpdateData } from "../types/type";
 
 export class UserService {
   async findUser(data: string) {
@@ -7,14 +7,13 @@ export class UserService {
     return user;
   }
 
-  async createUser(data: string) {
-    const user = await userModel.create({ data });
-    const savedUser = await user.save();
-    return savedUser;
+  async createUser(data: IUser) {
+    const user = await userModel.create(data);
+    return await user.save();
   }
 
   async findById(userId: string) {
-    return await userModel.findById(userId);
+    return await userModel.findById(userId).select("-password -refreshToken");
   }
 
   async findByIdAndUpdate(userId: string, data: UpdateData) {

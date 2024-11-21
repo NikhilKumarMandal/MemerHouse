@@ -4,7 +4,7 @@ import { HashService } from "../services/hash.services";
 import { OtpService } from "../services/otp.services";
 import { TokenService } from "../services/token.services";
 import { UserService } from "../services/user.services";
-import { DecodedToken, IBody } from "../types/type";
+import { DecodedToken } from "../types/type";
 import { ApiError } from "../utils/ApiError";
 import { ApiResponse } from "../utils/ApiResponse";
 import { asyncHandler } from "../utils/asyncHandler";
@@ -20,75 +20,122 @@ export class AuthController {
   ) {}
 
   sendOtp = asyncHandler(async (req: Request, res: Response) => {
-    const { phone } = req.body;
+    const { email, username, password } = req.body;
 
-    if (!phone) {
-      throw new ApiError(400, "Phone number is required!");
+    if (!email || !username || !password) {
+      throw new ApiError(
+        400,
+        "Phone number, username, and password are required!"
+      );
+    }
+
+    const existedUser = await this.userService.findUser(email as string);
+
+    if (existedUser) {
+      throw new ApiError(409, "User with email or username already exists");
+    }
+
+    const hashedPassword = await this.hashService.hashPassword(
+      password as string
+    );
+
+    const userData = {
+      email,
+      username,
+      password: hashedPassword,
+    };
+
+    const user = await this.userService.createUser(userData);
+
+    const userId = user._id as unknown as string;
+    const createdUser = await this.userService.findById(userId);
+
+    if (!createdUser) {
+      throw new ApiError(
+        500,
+        "Something went wrong while registering the user"
+      );
     }
 
     const otp = this.otpService.genrateOtp();
+    createdUser.otp = String(otp);
 
     const timeToLeave: number = 1000 * 60 * 2; // 2min
     const expires = Date.now() + timeToLeave;
 
-    const data = `${phone}.${otp}.${expires}`;
+    createdUser.otpExpire = new Date(expires);
+    await createdUser.save({ validateBeforeSave: false });
+    // const data = `${phone}.${otp}.${expires}`;
 
-    const hash = this.hashService.hashOtp(data);
-    const hashedOtp = `${hash}.${expires}`;
+    // const hash = this.hashService.hashOtp(data);
+    // const hashedOtp = `${hash}.${expires}`;
+    if (!createdUser?.username) {
+      throw new Error("Username is required to verify email.");
+    }
 
     try {
-      await this.otpService.sendBySms(phone as string, otp);
-
-      res.status(200).json(
-        new ApiResponse(
-          200,
-          {
-            hashedOtp,
-            phone,
-          },
-          "OTP sent successfully"
-        )
+      const mailgenContent = this.otpService.verifyEmail(
+        createdUser.username,
+        String(otp)
       );
-    } catch {
+      console.log("Mailgen Content:", mailgenContent); // Log to check the generated content
+
+      const email = await this.otpService.sendEmail({
+        email: createdUser.email,
+        subject: "Verify email",
+        mailgenContent: mailgenContent,
+      });
+
+      console.log("Email sent:", email); // If the email is sent successfully
+
+      res
+        .status(200)
+        .json(new ApiResponse(200, createdUser, "OTP sent successfully"));
+    } catch (error) {
+      console.error("Error sending OTP:", error); // Log the error
       throw new ApiError(500, "Something went wrong while sending OTP");
     }
   });
 
   verifyOtp = asyncHandler(async (req: Request, res: Response) => {
-    const { hash, otp, phone } = req.body as IBody;
+    const { id } = req.params;
+    const { otp } = req.body;
 
-    if (!hash || !otp || !phone) {
-      throw new ApiError(400, "All fileds are required!");
+    if (!otp) {
+      throw new ApiError(400, "OTP is required!");
     }
 
-    const [hasedOtp, expires] = hash.split(".");
+    const user = await this.userService.findById(id);
 
-    if (Date.now() > +expires) {
-      throw new ApiError(400, "OTP expires!");
+    if (!user) {
+      throw new ApiError(400, "User does not exits!!!");
     }
 
-    const data = `${phone}.${otp}.${expires}`;
-
-    const isValid = this.otpService.verifyOtp(hasedOtp, data);
-
-    if (!isValid) {
-      throw new ApiError(400, "Invalid OTP!");
+    if (user.isVerified) {
+      throw new ApiError(400, "User is already verified");
     }
 
-    const existingUser = await this.userService.findUser(phone);
-    if (existingUser) {
-      throw new ApiError(409, "User with this phone no. already exists");
+    if (user.otp !== otp) {
+      return res
+        .status(400)
+        .json(new ApiResponse(400, "Invalid OTP, new OTP sent to your email"));
     }
 
-    const user = await this.userService.createUser(phone);
+    // Check if OTP is expired
+    const currentTime = Date.now();
+    const expirationTime = user?.otpExpire
+      ? new Date(user.otpExpire).getTime()
+      : 0;
 
-    const userId = user._id.toString();
+    if (currentTime > expirationTime) {
+      return res.status(400).json(new ApiResponse(400, "OTP expired"));
+    }
 
     const { refreshToken, accessToken } = this.tokenService.genrateToken({
-      _id: userId,
+      _id: id,
     });
 
-    await this.tokenService.savetoken(refreshToken, userId);
+    await this.tokenService.savetoken(refreshToken, id);
 
     const accessCookie: CookieOptions = {
       sameSite: "strict",

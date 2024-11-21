@@ -14,6 +14,10 @@ const {
   SMS_FROM_NUMBER,
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
+  EMAIL_HOST,
+  EMAIL_PORT,
+  EMAIL_USER,
+  EMAIL_PASS,
 } = process.env;
 
 export const Config = {
@@ -26,4 +30,8 @@ export const Config = {
   SMS_FROM_NUMBER,
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
+  EMAIL_HOST,
+  EMAIL_PORT,
+  EMAIL_USER,
+  EMAIL_PASS,
 };

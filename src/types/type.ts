@@ -1,4 +1,5 @@
 import { JwtPayload } from "jsonwebtoken";
+import Mailgen from "mailgen";
 import { ObjectId } from "mongodb";
 
 export interface IBody {
@@ -7,11 +8,18 @@ export interface IBody {
   phone: string;
 }
 
+export interface IUser {
+  email: string;
+  password: string;
+  username: string;
+}
+
 export interface UserDetails {
   _id: ObjectId;
-  phone: string;
+  email: string;
   createdAt: Date;
   activated?: boolean | null;
+  isVerified?: boolean | null;
 }
 
 export interface UpdateData {
@@ -42,4 +50,23 @@ export interface Room {
 export interface Data {
   topic: string;
   roomType: string;
+}
+
+export interface SendEmailVerificationProps {
+  req?: Request;
+  email: string;
+  subject: string;
+  user?: string;
+  mailgenContent: Mailgen.Content;
+}
+
+export interface MailgenContent {
+  body: {
+    name: string;
+    intro: string;
+    dictionary: {
+      OTP: string;
+    };
+    outro: string;
+  };
 }
